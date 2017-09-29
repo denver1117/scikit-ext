@@ -3,8 +3,10 @@ Various scikit-learn extensions
 """
 
 import numpy as np
+import time
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import normalize
+from sklearn.metrics.scorer import _BaseScorer
 
 class OneVsRestAdjClassifier(OneVsRestClassifier):
     """
@@ -85,3 +87,60 @@ class OneVsRestAdjClassifier(OneVsRestClassifier):
             return normalize(out, norm=self.norm)
         else:
             return out
+
+class _TimeScorer(_BaseScorer):
+    def __call__(self, estimator, X, y_true=None, n_iter=1, unit=True):
+        """
+        Evaluate prediction latency.
+
+        Parameters
+        ----------
+        estimator : object
+            Trained estimator to use for scoring.
+        X : array-like or sparse matrix
+            Test data that will be fed to estimator.predict.
+        y_true : array-like, default None
+            Gold standard target values for X. Not necessary
+            for _TimeScorer.
+        n_iter : int, default 1
+            Number of timing runs.
+        unit : bool, default True
+            Use per-unit latency or total latency.
+
+        Returns
+        -------
+        score : float
+            Average of timing iteratins applied to 
+            prediction of estimator on X.
+        """
+
+        # overwrite kwargs from _kwargs
+        if "n_iter" in self._kwargs.keys():
+            n_iter = self._kwargs["n_iter"]
+        if "unit" in self._kwargs.keys():
+            unit = self._kwargs["unit"]
+
+        # run timing iterations
+        count = 0
+        time_sum = 0
+        while count < n_iter:
+            count += 1
+            if unit:
+                time_sum += np.sum([
+                    self._elapsed(estimator, [x]) 
+                    for x in X])
+            else:
+                time_sum += self._elapsed(estimator, X)
+        return 1 / ((time_sum / float(n_iter)) / float(len(X)))
+
+    def _elapsed(self, estimator, X):
+        """
+        Return elapsed time for predict method of estimator
+        on X.
+        """
+            
+        start_time = time.time()
+        y_pred = estimator.predict(X)
+        end_time = time.time()
+        return end_time - start_time
+
