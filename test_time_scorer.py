@@ -4,7 +4,7 @@ Test OneVsRestAdjClassifier
 
 import pandas as pd
 from scikit_ext.extensions import _TimeScorer 
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
 
