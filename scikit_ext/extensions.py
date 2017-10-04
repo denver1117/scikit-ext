@@ -7,12 +7,123 @@ import time
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import normalize
 from sklearn.metrics.scorer import _BaseScorer
-from sklearn.base import is_classifier, clone
+from sklearn.base import (
+    BaseEstimator, ClassifierMixin, 
+    is_classifier, clone)
 from sklearn.utils.metaestimators import if_delegate_has_method
 from sklearn.model_selection._split import check_cv
 from sklearn.model_selection._search import BaseSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.exceptions import NotFittedError
+
+class IterRandomEstimator(BaseEstimator, ClassifierMixin):
+    """
+    Meta-Estimator intended primarily for unsupervised 
+    estimators whose fitted model can be heavily dependent
+    on an arbitrary random initialization state.  It is   
+    best used for problems where a ``fit_predict`` method
+    is intended, so the only data used for prediction will be
+    the same data on which the model was fitted.
+
+    The ``fit`` method will fit multiple iterations of the same
+    base estimator, varying the ``random_state`` argument
+    for each iteration.  The iterations will stop either 
+    when ``max_iter`` is reached, or when the target
+    score is obtained.
+
+    The model does not use cross validation to find the best
+    estimator.  It simply fits and scores on the entire input
+    data set.  A hyperparaeter is not being optimized here,
+    only random initialization states.  The idea is to find
+    the best fitted model, and keep that exact model, rather 
+    than to find the best hyperparameter set.
+    """
+
+    def __init__(self, estimator, target_score=None,
+                 max_iter=10, random_state=None,
+                 scoring=None, fit_params=None, 
+                 verbose=0):
+
+        self.estimator = estimator
+        self.target_score=target_score
+        self.max_iter=max_iter
+        self.random_state=random_state
+        if not self.random_state:
+            self.random_state = np.random.randint(100)
+        self.fit_params=fit_params
+        self.verbose=verbose
+        self.scoring=scoring
+
+    def fit(self, X, y=None, **fit_params):
+        """
+        Run fit on the estimator attribute multiple times 
+        with various ``random_state`` arguments and choose
+        the fitted estimator with the best score.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+            Training vector, where n_samples is the number of samples and
+            n_features is the number of features.
+        y : array-like, shape = [n_samples] or [n_samples, n_output], optional
+            Target relative to X for classification or regression;
+            None for unsupervised learning.
+
+        **fit_params : dict of string -> object
+            Parameters passed to the ``fit`` method of the estimator
+        """
+
+        if self.fit_params is not None:
+            warnings.warn('"fit_params" as a constructor argument was '
+                          'deprecated in version 0.19 and will be removed '
+                          'in version 0.21. Pass fit parameters to the '
+                          '"fit" method instead.', DeprecationWarning)
+            if fit_params:
+                warnings.warn('Ignoring fit_params passed as a constructor '
+                              'argument in favor of keyword arguments to '
+                              'the "fit" method.', RuntimeWarning)
+            else:
+                fit_params = self.fit_params
+        estimator = self.estimator
+        estimator.verbose = self.verbose
+        if self.verbose > 0:
+            if not self.target_score:
+                print("Fitting {0} estimators unless a target "
+                      "score of {1} is reached".format(
+                          self.max_iter, self.target_score))
+            else:
+                print("Fitting {0} estimators".format(
+                          self.max_iter))
+        count = 0
+        scores = []
+        estimators = []
+        states = []
+        random_state = self.random_state
+        if not random_state:
+            random_state = n
+        while count < self.max_iter:
+            estimator = clone(estimator)
+            if random_state:
+                random_state = random_state + 1
+            estimator.random_state = random_state 
+            estimator.fit(X, y, **fit_params) 
+            if self.scoring is not None:
+                score = self.scoring(estimator, X, y)
+            else:
+                score = estimator.score(X, y)
+            scores.append(score)
+            estimators.append(estimator)
+            states.append(random_state)
+            if self.target_score is not None and score > self.target_score:
+                break
+            count += 1
+        
+        self.best_estimator_ = estimators[np.argmax(scores)]
+        self.best_score_ = np.max(scores)
+        self.best_index_ = np.argmax(scores)
+        self.best_params_ = self.best_estimator_.get_params()
+        self.scores_ = scores
+        self.random_states_ = states
 
 class OptimizedEnsemble(BaseSearchCV):
     """
