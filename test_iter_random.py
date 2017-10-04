@@ -4,7 +4,7 @@ Test OptimizedEnsemble
 
 from sklearn.cluster import KMeans
 from sklearn.datasets import load_iris
-from scikit_ext.extensions import IterRandomEstimator
+from scikit_ext.extensions import IterRandomEstimator, cluster_distribution_score
 
 def main():
 
@@ -13,10 +13,12 @@ def main():
     X = data.data
 
     # initialize model
+    scoring = cluster_distribution_score
     model = IterRandomEstimator(
         KMeans(n_clusters=4), 
         max_iter=5,
-        verbose=0)
+        verbose=0,
+        scoring=scoring)
 
     # fit models
     model.fit(X)

@@ -15,6 +15,7 @@ from sklearn.model_selection._split import check_cv
 from sklearn.model_selection._search import BaseSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.exceptions import NotFittedError
+from sklearn.metrics import calinski_harabaz_score
 
 class IterRandomEstimator(BaseEstimator, ClassifierMixin):
     """
@@ -41,8 +42,8 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
 
     def __init__(self, estimator, target_score=None,
                  max_iter=10, random_state=None,
-                 scoring=None, fit_params=None, 
-                 verbose=0):
+                 scoring=calinski_harabaz_score, 
+                 fit_params=None, verbose=0):
 
         self.estimator = estimator
         self.target_score=target_score
@@ -59,6 +60,8 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
         Run fit on the estimator attribute multiple times 
         with various ``random_state`` arguments and choose
         the fitted estimator with the best score.
+
+        Uses ``calinski_harabaz_score`` is no scoring is provided.
 
         Parameters
         ----------
@@ -107,10 +110,8 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
                 random_state = random_state + 1
             estimator.random_state = random_state 
             estimator.fit(X, y, **fit_params) 
-            if self.scoring is not None:
-                score = self.scoring(estimator, X, y)
-            else:
-                score = estimator.score(X, y)
+            labels = estimator.labels_
+            score = self.scoring(X, labels)
             scores.append(score)
             estimators.append(estimator)
             states.append(random_state)
@@ -387,3 +388,26 @@ class _TimeScorer(_BaseScorer):
         end_time = time.time()
         return end_time - start_time
 
+def cluster_distribution_score(X, labels):
+    """
+    Description
+
+    Parameters
+    ----------
+    X : array-like, shape (``n_samples``, ``n_features``)
+        List of ``n_features``-dimensional data points. Each row corresponds
+        to a single data point.
+    labels : array-like, shape (``n_samples``,)
+        Predicted labels for each sample.
+
+    Returns
+    -------
+    score : float
+        The resulting Cluster Distribution score.
+    """
+
+    n_clusters = float(len(np.unique(labels)))
+    max_count = float(np.max(np.bincount(labels)))
+    return 1.0 / ((max_count / len(labels)) / (1.0 / n_clusters))
+
+    
