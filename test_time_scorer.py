@@ -3,7 +3,7 @@ Test OneVsRestAdjClassifier
 """
 
 import pandas as pd
-from scikit_ext.extensions import _TimeScorer 
+from scikit_ext.extensions import _TimeScorer, _MemoryScorer
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
@@ -18,6 +18,7 @@ def main():
     # initialize model
     latency_score = _TimeScorer(
         None, 1, {"unit": False, "n_iter": 25})
+    memory_score = _MemoryScorer(None, 1, {})
     model = GridSearchCV(
         DecisionTreeClassifier(), cv=3, 
         param_grid={'max_depth': [None, 15, 10, 5, 2, 1]},

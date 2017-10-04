@@ -4,6 +4,7 @@ Various scikit-learn extensions
 
 import numpy as np
 import time
+import cPickle
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import normalize
 from sklearn.metrics.scorer import _BaseScorer
@@ -354,7 +355,7 @@ class _TimeScorer(_BaseScorer):
         Returns
         -------
         score : float
-            Average of timing iteratins applied to 
+            1 / average of timing iteratins applied to 
             prediction of estimator on X.
         """
 
@@ -375,7 +376,7 @@ class _TimeScorer(_BaseScorer):
                     for x in X])
             else:
                 time_sum += self._elapsed(estimator, X)
-        return 1 / ((time_sum / float(n_iter)) / float(len(X)))
+        return 1. / ((time_sum / float(n_iter)) / float(len(X)))
 
     def _elapsed(self, estimator, X):
         """
@@ -387,6 +388,29 @@ class _TimeScorer(_BaseScorer):
         y_pred = estimator.predict(X)
         end_time = time.time()
         return end_time - start_time
+
+class _MemoryScorer(_BaseScorer):
+    def __call__(self, estimator, X=None, y_true=None):
+        """
+        Score using estimated memory of pickled estimator object.
+
+        Parameters
+        ----------
+        estimator : object
+            Trained estimator to use for scoring.
+        X : array-like or sparse matrix
+            Test data that will be fed to estimator.predict.
+        y_true : array-like, default None
+            Gold standard target values for X. Not necessary
+            for _TimeScorer.
+
+        Returns
+        -------
+        score : float
+            1 / estimated pickled estimator memory (MB) 
+        """
+
+        return 1. / (0.000001 * float(len(cPickle.dumps(estimator))))
 
 def cluster_distribution_score(X, labels):
     """
