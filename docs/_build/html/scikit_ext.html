@@ -1,0 +1,276 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>scikit_ext package &#8212; scikit-ext 0.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scikit-ext-package">
+<h1>scikit_ext package<a class="headerlink" href="#scikit-ext-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scikit_ext.estimators">
+<span id="scikit-ext-estimators-module"></span><h2>scikit_ext.estimators module<a class="headerlink" href="#module-scikit_ext.estimators" title="Permalink to this headline">¶</a></h2>
+<p>Various scikit-learn estimators and meta-estimators</p>
+<dl class="class">
+<dt id="scikit_ext.estimators.IterRandomEstimator">
+<em class="property">class </em><code class="descclassname">scikit_ext.estimators.</code><code class="descname">IterRandomEstimator</code><span class="sig-paren">(</span><em>estimator</em>, <em>target_score=None</em>, <em>max_iter=10</em>, <em>random_state=None</em>, <em>scoring=&lt;function calinski_harabaz_score&gt;</em>, <em>fit_params=None</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.IterRandomEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.ClassifierMixin</span></code></p>
+<p>Meta-Estimator intended primarily for unsupervised 
+estimators whose fitted model can be heavily dependent
+on an arbitrary random initialization state.  It is   
+best used for problems where a <code class="docutils literal"><span class="pre">fit_predict</span></code> method
+is intended, so the only data used for prediction will be
+the same data on which the model was fitted.</p>
+<p>The <code class="docutils literal"><span class="pre">fit</span></code> method will fit multiple iterations of the same
+base estimator, varying the <code class="docutils literal"><span class="pre">random_state</span></code> argument
+for each iteration.  The iterations will stop either 
+when <code class="docutils literal"><span class="pre">max_iter</span></code> is reached, or when the target
+score is obtained.</p>
+<p>The model does not use cross validation to find the best
+estimator.  It simply fits and scores on the entire input
+data set.  A hyperparaeter is not being optimized here,
+only random initialization states.  The idea is to find
+the best fitted model, and keep that exact model, rather 
+than to find the best hyperparameter set.</p>
+<dl class="method">
+<dt id="scikit_ext.estimators.IterRandomEstimator.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.IterRandomEstimator.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run fit on the estimator attribute multiple times 
+with various <code class="docutils literal"><span class="pre">random_state</span></code> arguments and choose
+the fitted estimator with the best score.</p>
+<p>Uses <code class="docutils literal"><span class="pre">calinski_harabaz_score</span></code> is no scoring is provided.</p>
+<dl class="docutils">
+<dt>X <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd>Training vector, where n_samples is the number of samples and
+n_features is the number of features.</dd>
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples] or [n_samples, n_output], optional</span></dt>
+<dd>Target relative to X for classification or regression;
+None for unsupervised learning.</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>fit_params <span class="classifier-delimiter">:</span> <span class="classifier">dict of string -&gt; object</span></dt>
+<dd>Parameters passed to the <code class="docutils literal"><span class="pre">fit</span></code> method of the estimator</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scikit_ext.estimators.OneVsRestAdjClassifier">
+<em class="property">class </em><code class="descclassname">scikit_ext.estimators.</code><code class="descname">OneVsRestAdjClassifier</code><span class="sig-paren">(</span><em>estimator</em>, <em>norm=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.OneVsRestAdjClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.multiclass.OneVsRestClassifier</span></code></p>
+<p>One-vs-the-rest (OvR) multiclass strategy</p>
+<p>Also known as one-vs-all, this strategy consists in fitting one classifier per class. 
+For each classifier, the class is fitted against all the other classes. 
+In addition to its computational efficiency (only n_classes classifiers are needed), 
+one advantage of this approach is its interpretability. 
+Since each class is represented by one and one classifier only, it is possible to gain 
+knowledge about the class by inspecting its corresponding classifier. 
+This is the most commonly used strategy for multiclass classification and is a fair default choice.</p>
+<p>The adjusted version is a custom extension which overwrites the inherited predict_proba() method with
+a more flexible method allowing custom normalization for the predicted probabilities. Any norm
+argument that can be passed directly to sklearn.preprocessing.normalize is allowed. Additionally,
+norm=None will skip the normalization step alltogeter. To mimick the inherited OneVsRestClassfier
+behavior, set norm=’l2’. All other methods are inherited from OneVsRestClassifier.</p>
+<dl class="docutils">
+<dt>estimator <span class="classifier-delimiter">:</span> <span class="classifier">estimator object</span></dt>
+<dd>An estimator object implementing fit and one of decision_function or predict_proba.</dd>
+<dt>n_jobs <span class="classifier-delimiter">:</span> <span class="classifier">int, optional, default: 1</span></dt>
+<dd>The number of jobs to use for the computation. If -1 all CPUs are used. 
+If 1 is given, no parallel computing code is used at all, which is useful for debugging. 
+For n_jobs below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs but one are used.</dd>
+<dt>norm: str, optional, default: None</dt>
+<dd>Normalization method to be passed straight into sklearn.preprocessing.normalize as the norm 
+input. A value of None (default) will skip the normalization step.</dd>
+</dl>
+<dl class="docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">estimators_</span></a> <span class="classifier-delimiter">:</span> <span class="classifier">list of n_classes estimators</span></dt>
+<dd>Estimators used for predictions.</dd>
+<dt><a href="#id7"><span class="problematic" id="id8">classes_</span></a> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape = [n_classes]</span></dt>
+<dd>Class labels.</dd>
+<dt><a href="#id9"><span class="problematic" id="id10">label_binarizer_</span></a> <span class="classifier-delimiter">:</span> <span class="classifier">LabelBinarizer object</span></dt>
+<dd>Object used to transform multiclass labels to binary labels and vice-versa.</dd>
+<dt><a href="#id11"><span class="problematic" id="id12">multilabel_</span></a> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd>Whether a OneVsRestClassifier is a multilabel classifier.</dd>
+</dl>
+<dl class="method">
+<dt id="scikit_ext.estimators.OneVsRestAdjClassifier.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.OneVsRestAdjClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability estimates.</p>
+<p>The returned estimates for all classes are ordered by label of classes.</p>
+<p>X : array-like, shape = [n_samples, n_features]</p>
+<dl class="docutils">
+<dt>T <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_classes]</span></dt>
+<dd>Returns the probability of the sample for each class in the model, 
+where classes are ordered as they are in <a href="#id13"><span class="problematic" id="id14">self.classes_</span></a>.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scikit_ext.estimators.OptimizedEnsemble">
+<em class="property">class </em><code class="descclassname">scikit_ext.estimators.</code><code class="descname">OptimizedEnsemble</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_estimators_init=5</em>, <em>threshold=0.01</em>, <em>max_iter=10</em>, <em>step_function=&lt;function &lt;lambda&gt;&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.OptimizedEnsemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.model_selection._search.BaseSearchCV</span></code></p>
+<p>An optimized ensemble class. Will find the optimal <code class="docutils literal"><span class="pre">n_estimators</span></code>
+parameter for the given ensemble estimator, according to the
+specified input parameters.</p>
+<p>The <code class="docutils literal"><span class="pre">fit</span></code> method will iterate through n_estimators options,
+starting with n_estimators_init, and using the step_function 
+reursively from there. Stop at max_iter or when the score 
+gain between iterations is less than threshold.</p>
+<p>The OptimizedEnsemble class can then itself be used
+as an Estimator, or the <code class="docutils literal"><span class="pre">best_estimator_</span></code> attribute
+can be accessed directly, which is a fitted version of the input
+estimator with the optimal parameters.</p>
+<dl class="method">
+<dt id="scikit_ext.estimators.OptimizedEnsemble.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.OptimizedEnsemble.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the optimal <code class="docutils literal"><span class="pre">n_estimators</span></code> parameter using a custom
+optimization routine.</p>
+<dl class="docutils">
+<dt>X <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd>Training vector, where n_samples is the number of samples and
+n_features is the number of features.</dd>
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples] or [n_samples, n_output], optional</span></dt>
+<dd>Target relative to X for classification or regression;
+None for unsupervised learning.</dd>
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>fit_params <span class="classifier-delimiter">:</span> <span class="classifier">dict of string -&gt; object</span></dt>
+<dd>Parameters passed to the <code class="docutils literal"><span class="pre">fit</span></code> method of the estimator</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scikit_ext.estimators.OptimizedEnsemble.score">
+<code class="descname">score</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.estimators.OptimizedEnsemble.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call score on the estimator with the best found parameters.
+Only available if the underlying estimator supports <code class="docutils literal"><span class="pre">score</span></code>.</p>
+<p>This uses the score defined by the <code class="docutils literal"><span class="pre">best_estimator_.score</span></code> method.</p>
+<dl class="docutils">
+<dt>X <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd>Input data, where n_samples is the number of samples and
+n_features is the number of features.</dd>
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples] or [n_samples, n_output], optional</span></dt>
+<dd>Target relative to X for classification or regression;
+None for unsupervised learning.</dd>
+</dl>
+<p>score : float</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-scikit_ext.scorers">
+<span id="scikit-ext-scorers-module"></span><h2>scikit_ext.scorers module<a class="headerlink" href="#module-scikit_ext.scorers" title="Permalink to this headline">¶</a></h2>
+<p>Various scikit-learn scorers and scoring functions</p>
+<dl class="function">
+<dt id="scikit_ext.scorers.cluster_distribution_score">
+<code class="descclassname">scikit_ext.scorers.</code><code class="descname">cluster_distribution_score</code><span class="sig-paren">(</span><em>X</em>, <em>labels</em><span class="sig-paren">)</span><a class="headerlink" href="#scikit_ext.scorers.cluster_distribution_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description</p>
+<dl class="docutils">
+<dt>X <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape (<code class="docutils literal"><span class="pre">n_samples</span></code>, <code class="docutils literal"><span class="pre">n_features</span></code>)</span></dt>
+<dd>List of <code class="docutils literal"><span class="pre">n_features</span></code>-dimensional data points. Each row corresponds
+to a single data point.</dd>
+<dt>labels <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape (<code class="docutils literal"><span class="pre">n_samples</span></code>,)</span></dt>
+<dd>Predicted labels for each sample.</dd>
+</dl>
+<dl class="docutils">
+<dt>score <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The resulting Cluster Distribution score.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scikit_ext">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-scikit_ext" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">scikit-ext</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Evan Harris.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/scikit_ext.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
