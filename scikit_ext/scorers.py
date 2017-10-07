@@ -119,7 +119,7 @@ class _MemoryScorer(_BaseScorer):
 class _CombinedScorer(_BaseScorer):
     def __call__(self, estimator, X=None, y_true=None, scoring=None):
         """
-        Score using estimated memory of pickled estimator object.
+        Combine multiple scorers using the average of their scores.
 
         Parameters
         ----------
@@ -152,7 +152,8 @@ class _CombinedScorer(_BaseScorer):
 
 def cluster_distribution_score(X, labels):
     """
-    Description
+    Scoring function which scores the resulting cluster distribution accross classes. 
+    A more even distribution indicates a higher score.
 
     Parameters
     ----------
