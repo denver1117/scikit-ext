@@ -334,7 +334,7 @@ class OneVsRestAdjClassifier(OneVsRestClassifier):
             return out
 
 class _TimeScorer(_BaseScorer):
-    def __call__(self, estimator, X, y_true=None, n_iter=1, unit=True):
+    def __call__(self, estimator, X, y_true=None, n_iter=1, unit=True, scoring=None, tradeoff=None):
         """
         Evaluate prediction latency.
 
@@ -351,12 +351,16 @@ class _TimeScorer(_BaseScorer):
             Number of timing runs.
         unit : bool, default True
             Use per-unit latency or total latency.
+        scoring: scorer object, default None
+            Scorer used for trade-off.
+        tradeoff: float, default None
+            Multiplier for tradeoff.
 
         Returns
         -------
         score : float
-            1 / average of timing iteratins applied to 
-            prediction of estimator on X.
+            Custom score combining scoring method (optional)
+            and estimator prediction latency (ms).
         """
 
         # overwrite kwargs from _kwargs
@@ -364,6 +368,10 @@ class _TimeScorer(_BaseScorer):
             n_iter = self._kwargs["n_iter"]
         if "unit" in self._kwargs.keys():
             unit = self._kwargs["unit"]
+        if "scoring" in self._kwargs.keys():
+            scoring = self._kwargs["scoring"]
+        if "tradeoff" in self._kwargs.keys():
+            tradeoff = self._kwargs["tradeoff"]
 
         # run timing iterations
         count = 0
@@ -376,7 +384,13 @@ class _TimeScorer(_BaseScorer):
                     for x in X])
             else:
                 time_sum += self._elapsed(estimator, X)
-        return 1. / ((time_sum / float(n_iter)) / float(len(X)))
+        unit_time = 1000 * float((time_sum / float(n_iter)) / float(len(X)))
+        if scoring and tradeoff:
+            scoring_score = scoring(estimator, X, y_true)
+            print scoring_score, unit_time, tradeoff, scoring_score - (tradeoff * unit_time)
+            return scoring_score - (tradeoff * unit_time)
+        else:
+            return 1. / unit_time
 
     def _elapsed(self, estimator, X):
         """
@@ -390,7 +404,7 @@ class _TimeScorer(_BaseScorer):
         return end_time - start_time
 
 class _MemoryScorer(_BaseScorer):
-    def __call__(self, estimator, X=None, y_true=None):
+    def __call__(self, estimator, X=None, y_true=None, scoring=None, tradeoff=None):
         """
         Score using estimated memory of pickled estimator object.
 
@@ -400,17 +414,34 @@ class _MemoryScorer(_BaseScorer):
             Trained estimator to use for scoring.
         X : array-like or sparse matrix
             Test data that will be fed to estimator.predict.
+            Not necessary for _MemoryScorer.
         y_true : array-like, default None
             Gold standard target values for X. Not necessary
-            for _TimeScorer.
+            for _MemoryScorer.
+        scoring: scorer object, default None
+            Scorer used for trade-off.
+        tradeoff: float, default None
+            Multiplier for tradeoff.
 
         Returns
         -------
         score : float
-            1 / estimated pickled estimator memory (MB) 
+            Custom score combining scoring method (optional)
+            and estimator memory (MB).
         """
 
-        return 1. / (0.000001 * float(len(cPickle.dumps(estimator))))
+        # overwrite kwargs from _kwargs
+        if "scoring" in self._kwargs.keys():
+            scoring = self._kwargs["scoring"]
+        if "tradeoff" in self._kwargs.keys():
+            tradeoff = self._kwargs["tradeoff"]
+
+        obj_size = (0.000001 * float(len(cPickle.dumps(estimator))))
+        if scoring and tradeoff:
+            scoring_score = scoring(estimator, X, y_true)
+            return scoring_score - (tradeoff * obj_size)
+        else:
+            return 1. / obj_size
 
 def cluster_distribution_score(X, labels):
     """
