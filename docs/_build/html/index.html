@@ -40,8 +40,45 @@
             
   <div class="section" id="welcome-to-scikit-ext-s-documentation">
 <h1>Welcome to scikit-ext’s documentation!<a class="headerlink" href="#welcome-to-scikit-ext-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p># scikit-ext
-Various scikit-learn extensions</p>
+<p># scikit-ext : various scikit-learn extensions</p>
+<p>### About
+The <cite>scikit_ext</cite> package contains various scikit-learn extensions, built entirely on top of <cite>sklearn</cite> base classes.  The package is separated into two modules, <cite>estimators</cite> and <cite>scorers</cite>.</p>
+<p>### Estimators
+- <cite>IterRandomEstimator</cite>: Meta-Estimator intended primarily for unsupervised</p>
+<blockquote>
+<div>estimators whose fitted model can be heavily dependent
+on an arbitrary random initialization state.  It is
+best used for problems where a <cite>fit_predict</cite> method
+is intended, so the only data used for prediction will be
+the same data on which the model was fitted.</div></blockquote>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><cite>OptimizedEnsemble</cite>: An optimized ensemble class. Will find the optimal <cite>n_estimators</cite></dt>
+<dd>parameter for the given ensemble estimator, according to the
+specified input parameters.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>OneVsRestAdjClassifier</cite>: One-Vs-Rest multiclass strategy.  The adjusted version is a custom</dt>
+<dd>extension which overwrites the inherited <cite>predict_proba</cite> method with
+a more flexible method allowing custom normalization for the predicted probabilities. Any norm
+argument that can be passed directly to <cite>sklearn.preprocessing.normalize</cite> is allowed. Additionally,
+norm=None will skip the normalization step alltogeter. To mimick the inherited <cite>OneVsRestClassfier</cite>
+behavior, set norm=’l2’. All other methods are inherited from <cite>OneVsRestClassifier</cite>.</dd>
+</dl>
+</li>
+</ul>
+<p>### Scorers
+- <cite>_TimeScorer</cite>: Score using estimated prediction latency of estimator.
+- <cite>_MemoryScorer</cite>: Score using estimated memory of pickled estimator object.
+- <cite>_CombinedScorer</cite>: Score combining multiple scorers by averaging their scores.
+- <cite>cluster_distribution_score</cite>: Scoring function which scores the resulting cluster distribution accross classes.</p>
+<blockquote>
+<div>A more even distribution indicates a higher score.</div></blockquote>
+<p>### Authors</p>
+<p>Evan Harris</p>
+<p>### License</p>
+<p>This project is licensed under the MIT License - see the LICENSE file for details</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
