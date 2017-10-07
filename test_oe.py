@@ -4,7 +4,7 @@ Test OptimizedEnsemble
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import load_iris
-from scikit_ext.extensions import OptimizedEnsemble
+from scikit_ext.estimators import OptimizedEnsemble
 from sklearn.metrics import make_scorer, f1_score
 
 def main():

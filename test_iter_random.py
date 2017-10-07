@@ -1,10 +1,11 @@
 """
-Test OptimizedEnsemble 
+Test random iterations estimator 
 """
 
 from sklearn.cluster import KMeans
 from sklearn.datasets import load_iris
-from scikit_ext.extensions import IterRandomEstimator, cluster_distribution_score
+from scikit_ext.estimators import IterRandomEstimator
+from scikit_ext.scorers import cluster_distribution_score
 
 def main():
 

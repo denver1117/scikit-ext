@@ -2,7 +2,7 @@
 Test OneVsRestAdjClassifier 
 """
 
-from scikit_ext.extensions import OneVsRestAdjClassifier
+from scikit_ext.estimators import OneVsRestAdjClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.multiclass import OneVsRestClassifier

@@ -1,9 +1,9 @@
 """
-Test OneVsRestAdjClassifier 
+Test time and memory scorers 
 """
 
 import pandas as pd
-from scikit_ext.extensions import _TimeScorer, _MemoryScorer
+from scikit_ext.scorers import _TimeScorer, _MemoryScorer, _CombinedScorer
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
@@ -22,10 +22,12 @@ def main():
         None, 1, {"unit": False, "n_iter": 25, "scoring": acc_scorer, "tradeoff": 0.01})
     memory_score = _MemoryScorer(
         None, 1, {"scoring": acc_scorer, "tradeoff": 100})
+    combined_score = _CombinedScorer(
+        None, 1, {"scoring": [latency_score, memory_score]})
     model = GridSearchCV(
         DecisionTreeClassifier(), cv=3, 
         param_grid={'max_depth': [None, 15, 10, 5, 2, 1]},
-        scoring=latency_score)
+        scoring=combined_score)
 
     # fit models
     model.fit(X, y)
