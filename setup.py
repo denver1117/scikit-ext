@@ -5,7 +5,7 @@ Run setup
 from distutils.core import setup
 
 setup(name='scikit-ext',
-      version='0.1.2',
+      version='0.1.3',
       description='Various scikit-learn extensions',
       url='https://github.com/denver1117/scikit-ext',
       download_url='https://github.com/denver1117/scikit-ext/archive/0.1.2.tar.gz',

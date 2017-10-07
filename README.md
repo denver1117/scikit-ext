@@ -1,2 +1,2 @@
-# scitkit-ext
+# scikit-ext
 Various scikit-learn extensions
