@@ -19,6 +19,13 @@ The `scikit_ext` package contains various scikit-learn extensions, built entirel
     argument that can be passed directly to `sklearn.preprocessing.normalize` is allowed. Additionally,
     norm=None will skip the normalization step alltogeter. To mimick the inherited `OneVsRestClassfier`
     behavior, set norm='l2'. All other methods are inherited from `OneVsRestClassifier`.
+    
+### Scorers
+- `_TimeScorer`: Score using estimated prediction latency of estimator.
+- `_MemoryScorer`: Score using estimated memory of pickled estimator object.
+- `_CombinedScorer`: Score combining multiple scorers by averaging their scores.
+- `cluster_distribution_score`: Scoring function which scores the resulting cluster distribution accross classes. 
+    A more even distribution indicates a higher score.
 
 ### Authors
 
