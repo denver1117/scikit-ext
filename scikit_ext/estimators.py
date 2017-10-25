@@ -3,6 +3,9 @@ Various scikit-learn estimators and meta-estimators
 """
 
 import numpy as np
+import pandas as pd
+from scipy.stats import rankdata 
+from sklearn.model_selection import GridSearchCV
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import normalize
 from sklearn.base import (
@@ -14,6 +17,82 @@ from sklearn.model_selection._search import BaseSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import calinski_harabaz_score
+
+class MultiGridSearchCV(BaseSearchCV):
+    """
+    An iterator through multiple GridSearchCV
+    models using various ``estimators`` and associated ``param_grids``.
+    Providing two equal length iterables as required arguments 
+    containing estimators and paraeter grids, as well as keyword arguments for 
+    GridSearchCV, will then simply iterate through and fit multiple 
+    GridSearchCV models, fitting them sequentially.
+
+    Then the maximum ``best_score_`` is compared accross the 
+    GridSearchCV models, and the best one is identified. The best
+    estimator is set as an attribute, ``best_estimator_`` and 
+    the best GridSearchCV model is set as an attribute, 
+    ``best_grid_search_cv_``.
+    """
+
+    def __init__(self, estimators, param_grids, **kwargs):
+   
+        self.estimators=estimators
+        self.param_grids=param_grids  
+        self.gs_kwargs=kwargs
+        BaseSearchCV.__init__(
+            self, None, **kwargs)
+
+    def fit(self, X, y=None):
+        """
+        Iterate through estimators and param_grids, fitting 
+        each, and then chosing the best. 
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+            Training vector, where n_samples is the number of samples and
+            n_features is the number of features.
+        y : array-like, shape = [n_samples] or [n_samples, n_output], optional
+            Target relative to X for classification or regression;
+            None for unsupervised learning.
+
+        """
+
+        # Iterate through estimators fitting each
+        models = []
+        for index in range(len(self.estimators)):
+            model = GridSearchCV(
+                self.estimators[index], 
+                self.param_grids[index],
+                **self.gs_kwargs)
+            model.fit(X, y)
+            models.append(model)
+
+        # Generate cross validation results
+        cv_df = pd.DataFrame()
+        for index in range(len(models)):
+            tmpDf = pd.DataFrame(models[index].cv_results_)
+            tmpDf["grid_search_index"] = index
+            cv_df = cv_df.append(tmpDf)
+        cv_df.index = range(len(cv_df))
+        cv_df = cv_df[[c for c in cv_df.columns if "param_" not in c]]
+        cv_df["rank_test_score"] = map(int, 
+            (len(cv_df) + 1) - 
+            rankdata(cv_df["mean_test_score"], method="ordinal"))
+        self.cv_results_ = {}
+        for col in cv_df.columns:
+            self.cv_results_[col] = list(cv_df[col].values)
+      
+        # Find best model and set associated attributes
+        self.scores_ = [x.best_score_ for x in models]
+        self.best_index_ = np.argmax(self.scores_)
+        self.best_score_ = models[self.best_index_].best_score_
+        self.best_grid_search_cv_ = models[self.best_index_]
+        self.best_estimator_ = models[self.best_index_].best_estimator_
+        self.scorer_ = self.best_grid_search_cv_.scorer_
+        self.multimetric_ = self.best_grid_search_cv_.multimetric_
+        self.n_splits_ = self.best_grid_search_cv_.n_splits_
+        return self
 
 class IterRandomEstimator(BaseEstimator, ClassifierMixin):
     """
@@ -43,7 +122,7 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
                  scoring=calinski_harabaz_score, 
                  fit_params=None, verbose=0):
 
-        self.estimator = estimator
+        self.estimator=estimator
         self.target_score=target_score
         self.max_iter=max_iter
         self.random_state=random_state
@@ -59,7 +138,7 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
         with various ``random_state`` arguments and choose
         the fitted estimator with the best score.
 
-        Uses ``calinski_harabaz_score`` is no scoring is provided.
+        Uses ``calinski_harabaz_score`` if no scoring is provided.
 
         Parameters
         ----------
