@@ -13,7 +13,7 @@ The scikit_ext package contains various scikit-learn extensions, built entirely 
 
 Estimators
 
-MultiGridSearchCV: Extension to native sklearn GridSearchCV. Accepts a list of estimators and param_grids, iterating through each fitting a GridSearchCV model for each estimator/param_grid. Chooses the best fitted GridSearchCV model. Inherits sklearn's BaseSearchCV class, so attributes and methods are all similar to GridSearchCV.
+MultiGridSearchCV: Extension to native sklearn GridSearchCV for multiple estimators and param_grids. Accepts a list of estimators and param_grids, iterating through each fitting a GridSearchCV model for each estimator/param_grid. Chooses the best fitted GridSearchCV model. Inherits sklearn's BaseSearchCV class, so attributes and methods are all similar to GridSearchCV.
 IterRandomEstimator: Meta-Estimator intended primarily for unsupervised estimators whose fitted model can be heavily dependent on an arbitrary random initialization state. It is
 best used for problems where a fit_predict method is intended, so the only data used for prediction will be the same data on which the model was fitted.
 OptimizedEnsemble: An optimized ensemble class. Will find the optimal n_estimators parameter for the given ensemble estimator, according to the specified input parameters.
@@ -38,7 +38,7 @@ setup(name='scikit-ext',
       description='Various scikit-learn extensions',
       long_description=long_description,
       classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
