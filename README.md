@@ -4,6 +4,11 @@
 The `scikit_ext` package contains various scikit-learn extensions, built entirely on top of `sklearn` base classes.  The package is separated into two modules, `estimators` and `scorers`.  
 
 ### Estimators
+- `MultiGridSearchCV`: Extension to native sklearn `GridSearchCV`. Accepts a list
+    of estimators and param_grids, iterating through each fitting 
+    a `GridSearchCV` model for each estimator/param_grid. Chooses
+    the best fitted `GridSearchCV` model. Inherits sklearn's `BaseSearchCV`
+    class, so attributes and methods are all similar to `GridSearchCV`.
 - `IterRandomEstimator`: Meta-Estimator intended primarily for unsupervised 
     estimators whose fitted model can be heavily dependent
     on an arbitrary random initialization state.  It is   
