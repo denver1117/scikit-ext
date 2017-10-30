@@ -4,6 +4,7 @@ Various scikit-learn estimators and meta-estimators
 
 import numpy as np
 import pandas as pd
+from scipy.sparse import csr_matrix
 from scipy.stats import rankdata 
 from sklearn.model_selection import GridSearchCV
 from sklearn.multiclass import OneVsRestClassifier
@@ -17,6 +18,167 @@ from sklearn.model_selection._search import BaseSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import calinski_harabaz_score
+from sklearn.pipeline import Pipeline
+
+class PrunedPipeline(Pipeline):
+    """
+    A standard sklearn feature Pipeline with additional 
+    pruning method. After fitting, the pruning method is 
+    applied to the fitted pipeline. This applies the 
+    feature selection directly to the fitted vocabulary
+    (and idf values if applicable), removing all elements of
+    these attributes that will not ultimately survive the  
+    feature selection filter.
+
+    The ``PrunedPipeline`` will make idential predictions 
+    as a similarly trained ``Pipeline``. However, it will require
+    less memory and will make faster predictions.
+
+    Parameters
+    ----------
+    steps : list
+        List of (name, transform) tuples (implementing fit/transform) that are
+        chained, in the order in which they are chained, with the last object
+        an estimator.
+    memory : None, str or object with the joblib.Memory interface, optional
+        Used to cache the fitted transformers of the pipeline. By default,
+        no caching is performed. If a string is given, it is the path to
+        the caching directory. Enabling caching triggers a clone of
+        the transformers before fitting. Therefore, the transformer
+        instance given to the pipeline cannot be inspected
+        directly. Use the attribute ``named_steps`` or ``steps`` to
+        inspect estimators within the pipeline. Caching the
+        transformers is advantageous when fitting is time consuming.
+    vectorizer_name : str, default vec
+        Name of ``Pipeline`` step which performs feature extraction. Any
+        transformer with a ``vocabulary_``dictionary can be the step
+        with this name.
+        Ideal transformers are of types
+        sklearn.feature_extraction.text.CountVectorizer or
+        sklearn.feature_extraction.text.TfidfVectorizer.
+    selector_name : str, default select
+        Name of ``Pipeline`` step which performs feature selection. Any
+        transformer with a ``get_support`` method returning an iterable
+        of booleans with length ``len(vocabulary_)`` can be the step with this name. 
+        Ideal transformers are of type sklearn.feature_selection.univariate_selection._BaseFilter.
+
+    Attributes
+    ----------
+    named_steps : bunch object, a dictionary with attribute access
+        Read-only attribute to access any step parameter by user given name.
+        Keys are step names and values are steps parameters.
+
+    """
+
+    def __init__(self, steps, memory=None, 
+                 vectorizer_name="vec", 
+                 selector_name="select"):
+    
+        Pipeline.__init__(
+            self, steps, memory=memory)
+        self.vectorizer_name=vectorizer_name
+        self.selector_name=selector_name
+        self._validate_prune()
+
+    def fit(self, X, y=None, **fit_params):
+        """
+        Fit the model
+        Fit all the transforms one after the other and transform the
+        data, then fit the transformed data using the final estimator.
+        Perform prune after standard pipeline fit.
+
+        Parameters
+        ----------
+        X : iterable
+            Training data. Must fulfill input requirements of first step of the
+            pipeline.
+        y : iterable, default=None
+            Training targets. Must fulfill label requirements for all steps of
+            the pipeline.
+        **fit_params : dict of string -> object
+            Parameters passed to the ``fit`` method of each step, where
+            each parameter name is prefixed such that parameter ``p`` for step
+            ``s`` has key ``s__p``.
+
+        Returns
+        -------
+        self : PrunedPipeline
+            This estimator
+        """
+
+        # standard Pipeline fit method
+        self._validate_prune()
+        Xt, fit_params = self._fit(X, y, **fit_params)
+        if self._final_estimator is not None:
+            self._final_estimator.fit(Xt, y, **fit_params)
+
+        # prune pipeline
+        if self.selector_name and self.vectorizer_name:
+            self._prune()
+
+        return self
+
+    def _validate_prune(self):
+        """ Validate prune step inputs """
+
+        names, estimators = zip(*self.steps)
+        for name in [self.selector_name, self.vectorizer_name]:
+            if name:
+                if not name in names: 
+                    raise ValueError(
+                        "Name {0} should exist in steps".format(
+                            name))
+        self.selector_index = names.index(self.selector_name) 
+        self.vectorizer_index = names.index(self.vectorizer_name)        
+
+    def _prune(self):
+        """
+        Prune fitted ``Pipeline`` object. The pruner runs the 
+        ``get_support`` method from the designated feature
+        selector, returning the selector mask. Then the ``vocabulary_`` 
+        (and optional ``idf_`` if exists) attribute is pruned
+        to only contain elements who survive the selector mask. The
+        selector step is then removed from the pipeline.
+ 
+        Transform methods on the pipeline will then reflect these
+        changes, reducing the size of the vectorizer and effectively
+        skipping the selector step. 
+      
+        """
+
+        # collect pipeline step data
+        voc = self.steps[self.vectorizer_index][1].vocabulary_
+        if hasattr(self.steps[self.vectorizer_index][1], "idf_"):
+            idf = self.steps[self.vectorizer_index][1].idf_
+        else:
+            idf = None
+        support = self.steps[self.selector_index][1].get_support()
+
+        # restructure vocabulary
+        terms = []
+        indices = []
+        for key, value in voc.iteritems():
+            terms.append(key)
+            indices.append(value)
+        sort_mask = np.argsort(indices)
+        terms = np.array(terms)[sort_mask]
+
+        # rebuild vocabulary dictionary
+        new_vocab = {}
+        new_idf = []
+        count = 0
+        for index in range(len(terms)):
+            if support[index]:
+                new_vocab[terms[index]] = count
+                if idf is not None:
+                    new_idf.append(idf[index])
+                count += 1
+
+        # replace vocabulary 
+        self.steps[self.vectorizer_index][1].vocabulary_ = new_vocab
+        if idf is not None:
+            self.steps[self.vectorizer_index][1]._tfidf._idf_diag = csr_matrix(np.diag(new_idf))
+        removed_step = self.steps.pop(self.selector_index)
 
 class MultiGridSearchCV(BaseSearchCV):
     """

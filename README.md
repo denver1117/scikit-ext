@@ -9,6 +9,14 @@ The `scikit_ext` package contains various scikit-learn extensions, built entirel
     a `GridSearchCV` model for each estimator/param_grid. Chooses
     the best fitted `GridSearchCV` model. Inherits sklearn's `BaseSearchCV`
     class, so attributes and methods are all similar to `GridSearchCV`.
+- `PrunedPipeline`: Extension to native sklearn `Pipeline` intended for text learning pipelines
+    with a vectorization step and a feature selection step. Instead of remembering all
+    vectorizer vocabulary elements and selecting appropriate features at prediction time,
+    the extension prunes the vocabulary after fitting to only include elements who will
+    ultimately survive the feature selection filter applied later in the pipeline. This reduces
+    memory and improves prediction latency. Predictions will be identical to those made
+    with a trained `Pipeline` model. Inherits sklearn's `Pipeline`
+    class, so attributes and methods are all similar to `Pipeline`.
 - `IterRandomEstimator`: Meta-Estimator intended primarily for unsupervised 
     estimators whose fitted model can be heavily dependent
     on an arbitrary random initialization state.  It is   
