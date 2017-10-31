@@ -4,7 +4,7 @@
 The `scikit_ext` package contains various scikit-learn extensions, built entirely on top of `sklearn` base classes.  The package is separated into two modules, `estimators` and `scorers`. 
 
 ### Installation
-[Package Index on PyPI](https://pypi.python.org/pypi/scikit-ext). <br> To install:
+[Package Index on PyPI](https://pypi.python.org/pypi/scikit-ext) <br> To install:
 ```
 pip install scikit-ext
 ```
