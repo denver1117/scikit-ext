@@ -6,7 +6,12 @@ About
 
 The ``scikit_ext`` package contains various scikit-learn extensions,
 built entirely on top of ``sklearn`` base classes. The package is
-separated into two modules, ``estimators`` and ``scorers``.
+separated into two modules:
+`estimators <http://scikit-ext.s3-website-us-east-1.amazonaws.com/scikit_ext.html#module-scikit_ext.estimators>`__
+and
+`scorers <http://scikit-ext.s3-website-us-east-1.amazonaws.com/scikit_ext.html#module-scikit_ext.scorers>`__.
+Full documentation can be found
+`here <http://scikit-ext.s3-website-us-east-1.amazonaws.com/index.html>`__.
 
 Installation
 ~~~~~~~~~~~~
