@@ -23,6 +23,16 @@ pip install scikit-ext
     memory and improves prediction latency. Predictions will be identical to those made
     with a trained `Pipeline` model. Inherits sklearn's `Pipeline`
     class, so attributes and methods are all similar to `Pipeline`.
+- `ZoomGridSearchCV`: Extension to native sklearn `GridSearchCV`. Fits multiple `GridSearchCV` models, updating
+    the `param_grid` after each iteration. The update
+    looks at successful parameter values for each 
+    grid key. A new list of values is created which 
+    expands the resolution of the search values centered
+    around the best performing value of the previous fit.
+    This allows the standard grid search process to start 
+    with a small number of distant values for each parameter,
+    and zoom in as the better performing corner of the 
+    hyperparameter search space becomes clear.
 - `IterRandomEstimator`: Meta-Estimator intended primarily for unsupervised 
     estimators whose fitted model can be heavily dependent
     on an arbitrary random initialization state.  It is   

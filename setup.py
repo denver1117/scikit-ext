@@ -5,12 +5,15 @@ Run setup
 from distutils.core import setup
 from os import path
 
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.rst')) as f:
-    long_description = f.read()
+try:
+    here = path.abspath(path.dirname(__file__))
+    with open(path.join(here, 'README.rst')) as f:
+        long_description = f.read()
+except:
+    long_description = ""
 
 setup(name='scikit-ext',
-      version='0.1.7',
+      version='0.1.8',
       description='Various scikit-learn extensions',
       long_description=long_description,
       classifiers=[
@@ -21,7 +24,7 @@ setup(name='scikit-ext',
         'Topic :: Scientific/Engineering :: Artificial Intelligence'
       ],
       url='https://github.com/denver1117/scikit-ext',
-      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.7.tar.gz',
+      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.8.tar.gz',
       author='Evan Harris',
       author_email='emitchellh@gmail.com',
       license='MIT',

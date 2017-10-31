@@ -20,6 +20,122 @@ from sklearn.exceptions import NotFittedError
 from sklearn.metrics import calinski_harabaz_score
 from sklearn.pipeline import Pipeline
 
+class ZoomGridSearchCV(GridSearchCV):
+    """
+    Fits multiple ``GridSearchCV`` models, updating
+    the ``param_grid`` after each iteration. The update
+    looks at successful parameter values for each 
+    grid key. A new list of values is created which 
+    expands the resolution of the search values centered
+    around the best performing value of the previous fit.
+    This allows the standard grid search process to start 
+    with a small number of distant values for each parameter,
+    and zoom in as the better performing corner of the 
+    hyperparameter search space becomes clear.
+
+    The process only updates paramter keys whose values
+    are all of type ``int`` or are all of type ``float``. Any
+    other data type valued parameters or mixed parameters will
+    simply be copied and reused for each iteration. The only
+    stopping criteria for iterations is the ``n_iter`` parameter.
+
+    Inherits ``GridSearchCV`` so all methods
+    and attributes are identical except for ``fit``
+    which is overriden by a method looping through
+    the ``fit`` method of ``GridSearchCV``. Ultimately,
+    the class exactly resembles a fitted ``GridSearchCV``
+    after ``fit`` is run. Running ``fit`` with 
+    ``n_iter = 0`` is identical to funning ``fit``
+    with ``GridSearchCV``.
+
+    """
+
+    def __init__(self, estimator, param_grid, 
+                 n_iter=1, **kwargs):
+
+        GridSearchCV.__init__(
+            self, estimator, param_grid, **kwargs)
+        self._fit = GridSearchCV.fit
+        self.n_iter=n_iter
+
+    def fit(self, X, y=None, groups=None, **fit_params):
+        """
+        Run fit with all sets of parameters. For ``n_iter``
+        iterations, zoom in on successful parameters, creating
+        a new parameter grid and refitting.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+            Training vector, where n_samples is the number of samples and
+            n_features is the number of features.
+        y : array-like, shape = [n_samples] or [n_samples, n_output], optional
+            Target relative to X for classification or regression;
+            None for unsupervised learning.
+        groups : array-like, with shape (n_samples,), optional
+            Group labels for the samples used while splitting the dataset into
+            train/test set.
+        **fit_params : dict of string -> object
+            Parameters passed to the ``fit`` method of the estimator
+
+        """
+        
+        n = -1
+        while n < self.n_iter:
+            if n > -1:
+                self._update_grid()
+                if self.verbose > 0:
+                    print "Grid Updated on Iteration {0}:".format(n)
+                    print self.param_grid
+            else:
+                if self.verbose > 0:
+                    print "Initial Grid:"
+                    print self.param_grid
+            GridSearchCV.fit(self, X, y=y, groups=groups, **fit_params)
+            n += 1
+
+    def _update_grid(self):
+        """ Update parameter grid based on previous fit results """
+
+        results = pd.DataFrame(self.cv_results_)
+
+        # get parameters to update
+        update_params = {}
+        for key, value in self.param_grid.iteritems():
+            if all(isinstance(x, int) for x in value):
+                update_params[key] = self._update_elements(
+                    results, key, value, dtype=int)
+            elif all(isinstance(x, float) for x in value):
+                update_params[key] = self._update_elements(
+                    results, key, value, dtype=float)
+            else:
+                update_params[key] = value
+
+        # update parameter grid attribute
+        self.param_grid = update_params
+
+    def _update_elements(self, results, key, value, dtype=int):
+        """ Update elements of a single param_grid key, value pair """
+
+        tmp = (results.loc[~pd.isnull(results["param_{0}".format(key)]),
+                ["param_{0}".format(key), "rank_test_score"]]
+                .sort_values("rank_test_score"))
+        best_val = tmp["param_{0}".format(key)].values[0]
+        value_range = (np.max(value) - np.min(value)) / 5.0
+        val = (
+            list(
+                np.linspace(best_val, best_val + value_range, 
+                int(round(len(value) / 2.0)))) +
+            list(
+                np.linspace(best_val - value_range, best_val, 
+                int(round(len(value) / 2.0)))))
+        val = list(np.unique([dtype(x) for x in val]))
+        if all(x >= 0 for x in value):
+            val = [x for x in val if x >= 0]
+        elif all(x <= 0 for x in value):
+            val = [x for x in val if x <= 0]
+        return val
+            
 class PrunedPipeline(Pipeline):
     """
     A standard sklearn feature Pipeline with additional 
