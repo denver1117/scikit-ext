@@ -21,7 +21,7 @@ setup(name='scikit-ext',
         'Topic :: Scientific/Engineering :: Artificial Intelligence'
       ],
       url='https://github.com/denver1117/scikit-ext',
-      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.6.tar.gz',
+      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.7.tar.gz',
       author='Evan Harris',
       author_email='emitchellh@gmail.com',
       license='MIT',
