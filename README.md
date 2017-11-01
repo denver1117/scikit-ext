@@ -50,9 +50,9 @@ pip install scikit-ext
     behavior, set norm='l2'. All other methods are inherited from `OneVsRestClassifier`.
     
 ### Scorers
-- `_TimeScorer`: Score using estimated prediction latency of estimator.
-- `_MemoryScorer`: Score using estimated memory of pickled estimator object.
-- `_CombinedScorer`: Score combining multiple scorers by averaging their scores.
+- `TimeScorer`: Score using estimated prediction latency of estimator.
+- `MemoryScorer`: Score using estimated memory of pickled estimator object.
+- `CombinedScorer`: Score combining multiple scorers by averaging their scores.
 - `cluster_distribution_score`: Scoring function which scores the resulting cluster distribution accross classes. 
     A more even distribution indicates a higher score.
 

@@ -74,11 +74,11 @@ Estimators
 Scorers
 ~~~~~~~
 
--  ``_TimeScorer``: Score using estimated prediction latency of
+-  ``TimeScorer``: Score using estimated prediction latency of
    estimator.
--  ``_MemoryScorer``: Score using estimated memory of pickled estimator
+-  ``MemoryScorer``: Score using estimated memory of pickled estimator
    object.
--  ``_CombinedScorer``: Score combining multiple scorers by averaging
+-  ``CombinedScorer``: Score combining multiple scorers by averaging
    their scores.
 -  ``cluster_distribution_score``: Scoring function which scores the
    resulting cluster distribution accross classes. A more even
