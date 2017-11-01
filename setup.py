@@ -13,7 +13,7 @@ except:
     long_description = ""
 
 setup(name='scikit-ext',
-      version='0.1.8',
+      version='0.1.9',
       description='Various scikit-learn extensions',
       long_description=long_description,
       classifiers=[
@@ -24,7 +24,7 @@ setup(name='scikit-ext',
         'Topic :: Scientific/Engineering :: Artificial Intelligence'
       ],
       url='https://github.com/denver1117/scikit-ext',
-      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.8.tar.gz',
+      download_url='https://github.com/denver1117/scikit-ext/archive/0.1.9.tar.gz',
       author='Evan Harris',
       author_email='emitchellh@gmail.com',
       license='MIT',
