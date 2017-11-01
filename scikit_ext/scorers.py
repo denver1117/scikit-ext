@@ -7,7 +7,7 @@ import time
 import cPickle
 from sklearn.metrics.scorer import _BaseScorer
 
-class _TimeScorer(_BaseScorer):
+class TimeScorer(_BaseScorer):
     def __call__(self, estimator, X, y_true=None, n_iter=1, unit=True, scoring=None, tradeoff=None):
         """
         Evaluate prediction latency.
@@ -76,7 +76,7 @@ class _TimeScorer(_BaseScorer):
         end_time = time.time()
         return end_time - start_time
 
-class _MemoryScorer(_BaseScorer):
+class MemoryScorer(_BaseScorer):
     def __call__(self, estimator, X=None, y_true=None, scoring=None, tradeoff=None):
         """
         Score using estimated memory of pickled estimator object.
@@ -116,7 +116,7 @@ class _MemoryScorer(_BaseScorer):
         else:
             return 1. / obj_size
 
-class _CombinedScorer(_BaseScorer):
+class CombinedScorer(_BaseScorer):
     def __call__(self, estimator, X=None, y_true=None, scoring=None):
         """
         Combine multiple scorers using the average of their scores.

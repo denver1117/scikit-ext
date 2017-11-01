@@ -3,7 +3,7 @@ Test time and memory scorers
 """
 
 import pandas as pd
-from scikit_ext.scorers import _TimeScorer, _MemoryScorer, _CombinedScorer
+from scikit_ext.scorers import TimeScorer, MemoryScorer, CombinedScorer
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
@@ -18,11 +18,11 @@ def main():
 
     # initialize model
     acc_scorer = make_scorer(accuracy_score)
-    latency_score = _TimeScorer(
+    latency_score = TimeScorer(
         None, 1, {"unit": False, "n_iter": 25, "scoring": acc_scorer, "tradeoff": 0.01})
-    memory_score = _MemoryScorer(
+    memory_score = MemoryScorer(
         None, 1, {"scoring": acc_scorer, "tradeoff": 100})
-    combined_score = _CombinedScorer(
+    combined_score = CombinedScorer(
         None, 1, {"scoring": [latency_score, memory_score]})
     model = GridSearchCV(
         DecisionTreeClassifier(), cv=3, 
