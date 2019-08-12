@@ -85,12 +85,12 @@ class ZoomGridSearchCV(GridSearchCV):
             if n > -1:
                 self._update_grid()
                 if self.verbose > 0:
-                    print "Grid Updated on Iteration {0}:".format(n)
-                    print self.param_grid
+                    print("Grid Updated on Iteration {0}:".format(n))
+                    print(self.param_grid)
             else:
                 if self.verbose > 0:
-                    print "Initial Grid:"
-                    print self.param_grid
+                    print("Initial Grid:")
+                    print(self.param_grid)
             GridSearchCV.fit(self, X, y=y, groups=groups, **fit_params)
             n += 1
 
@@ -101,15 +101,17 @@ class ZoomGridSearchCV(GridSearchCV):
 
         # get parameters to update
         update_params = {}
-        for key, value in self.param_grid.iteritems():
+        for key, value in self.param_grid.items():
             if all(isinstance(x, int) for x in value):
-                update_params[key] = self._update_elements(
+                updated_value = self._update_elements(
                     results, key, value, dtype=int)
             elif all(isinstance(x, float) for x in value):
-                update_params[key] = self._update_elements(
+                updated_value = self._update_elements(
                     results, key, value, dtype=float)
             else:
-                update_params[key] = value
+                updated_value = value
+            if len(updated_value) > 0:
+                update_params[key] = updated_value
 
         # update parameter grid attribute
         self.param_grid = update_params
