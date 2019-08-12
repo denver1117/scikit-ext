@@ -31,7 +31,7 @@ setup(name='scikit-ext',
       packages=['scikit_ext'],
       install_requires=[
           'pandas',
-          'numpy>=1.13.1',
-          'scipy>=0.17.0',
-          'scikit-learn>=0.18.2'
+          'numpy>=1.17.0',
+          'scipy>=1.3.1',
+          'scikit-learn>=0.21.3'
       ])
