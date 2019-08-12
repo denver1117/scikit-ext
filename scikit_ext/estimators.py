@@ -275,7 +275,7 @@ class PrunedPipeline(Pipeline):
         # restructure vocabulary
         terms = []
         indices = []
-        for key, value in voc.iteritems():
+        for key, value in voc.items():
             terms.append(key)
             indices.append(value)
         sort_mask = np.argsort(indices)
