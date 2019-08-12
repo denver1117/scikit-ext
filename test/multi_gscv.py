@@ -24,15 +24,15 @@ def main():
     model.fit(X, y)
 
     # print results
-    print model.cv_results_
-    print model.best_score_
-    print model.best_estimator_
-    print model.best_grid_search_cv_
+    print(model.cv_results_)
+    print(model.best_score_)
+    print(model.best_estimator_)
+    print(model.best_grid_search_cv_)
 
     # test predict
-    print model.predict(X[:10])
-    print model.predict_proba(X[:10])
-    print model.score(X, y)
+    print(model.predict(X[:10]))
+    print(model.predict_proba(X[:10]))
+    print(model.score(X, y))
 
 if __name__ == "__main__":
     main()
