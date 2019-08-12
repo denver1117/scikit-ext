@@ -433,17 +433,6 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
             Parameters passed to the ``fit`` method of the estimator
         """
 
-        if self.fit_params is not None:
-            warnings.warn('"fit_params" as a constructor argument was '
-                          'deprecated in version 0.19 and will be removed '
-                          'in version 0.21. Pass fit parameters to the '
-                          '"fit" method instead.', DeprecationWarning)
-            if fit_params:
-                warnings.warn('Ignoring fit_params passed as a constructor '
-                              'argument in favor of keyword arguments to '
-                              'the "fit" method.', RuntimeWarning)
-            else:
-                fit_params = self.fit_params
         estimator = self.estimator
         estimator.verbose = self.verbose
         if self.verbose > 0:
@@ -530,17 +519,6 @@ class OptimizedEnsemble(BaseSearchCV):
             Parameters passed to the ``fit`` method of the estimator
         """
 
-        if self.fit_params is not None:
-            warnings.warn('"fit_params" as a constructor argument was '
-                          'deprecated in version 0.19 and will be removed '
-                          'in version 0.21. Pass fit parameters to the '
-                          '"fit" method instead.', DeprecationWarning)
-            if fit_params:
-                warnings.warn('Ignoring fit_params passed as a constructor '
-                              'argument in favor of keyword arguments to '
-                              'the "fit" method.', RuntimeWarning)
-            else:
-                fit_params = self.fit_params
         estimator = self.estimator
         cv = check_cv(self.cv, y, classifier=is_classifier(estimator))
         n_splits = cv.get_n_splits(X, y, groups=None)
