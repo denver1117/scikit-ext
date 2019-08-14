@@ -314,10 +314,11 @@ class MultiGridSearchCV(BaseSearchCV):
     ``best_grid_search_cv_``.
     """
 
-    def __init__(self, estimators, param_grids, **kwargs):
+    def __init__(self, estimators, param_grids, gs_estimator=GridSearchCV, **kwargs):
    
         self.estimators=estimators
         self.param_grids=param_grids  
+        self.gs_estimator=gs_estimator
         self.gs_kwargs=kwargs
         BaseSearchCV.__init__(
             self, None, **kwargs)
@@ -341,7 +342,7 @@ class MultiGridSearchCV(BaseSearchCV):
         # Iterate through estimators fitting each
         models = []
         for index in range(len(self.estimators)):
-            model = GridSearchCV(
+            model = self.gs_estimator(
                 self.estimators[index], 
                 self.param_grids[index],
                 **self.gs_kwargs)
