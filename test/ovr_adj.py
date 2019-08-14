@@ -29,9 +29,9 @@ def main():
     ovr_adj_norm.fit(X_train, y_train)
 
     # print scores (should be equal)
-    print ovr_scikit.score(X_test, y_test)
-    print ovr_adj.score(X_test, y_test)
-    print ovr_adj_norm.score(X_test, y_test)
+    print(ovr_scikit.score(X_test, y_test))
+    print(ovr_adj.score(X_test, y_test))
+    print(ovr_adj_norm.score(X_test, y_test))
 
     # get probs from predict_proba() methods
     probs_scikit = ovr_scikit.predict_proba(X_test)
@@ -39,16 +39,16 @@ def main():
     probs_adj_norm = ovr_adj_norm.predict_proba(X_test)
 
     # print types (should be equal)
-    print type(probs_scikit)
-    print type(probs_adj)
-    print type(probs_adj_norm)
+    print(type(probs_scikit))
+    print(type(probs_adj))
+    print(type(probs_adj_norm))
 
     # print probability matrices 
     # (first and third should be equal
     # second should differ slightly)
-    print probs_scikit
-    print probs_adj
-    print probs_adj_norm
+    print(probs_scikit)
+    print(probs_adj)
+    print(probs_adj_norm)
 
 if __name__ == "__main__":
     main()

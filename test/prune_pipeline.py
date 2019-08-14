@@ -24,10 +24,10 @@ def main():
         ("clf", dt)])
 
     pipeline.fit(X, y)
-    print pipeline.score(X,y)
-    print pipeline.predict(X)[:10]
-    print pipeline.predict_proba(X)[:10]
-    print pipeline.steps
+    print(pipeline.score(X,y))
+    print(pipeline.predict(X)[:10])
+    print(pipeline.predict_proba(X)[:10])
+    print(pipeline.steps)
  
 if __name__ == "__main__":
     main()

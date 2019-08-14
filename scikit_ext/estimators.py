@@ -85,12 +85,12 @@ class ZoomGridSearchCV(GridSearchCV):
             if n > -1:
                 self._update_grid()
                 if self.verbose > 0:
-                    print "Grid Updated on Iteration {0}:".format(n)
-                    print self.param_grid
+                    print("Grid Updated on Iteration {0}:".format(n))
+                    print(self.param_grid)
             else:
                 if self.verbose > 0:
-                    print "Initial Grid:"
-                    print self.param_grid
+                    print("Initial Grid:")
+                    print(self.param_grid)
             GridSearchCV.fit(self, X, y=y, groups=groups, **fit_params)
             n += 1
 
@@ -101,15 +101,17 @@ class ZoomGridSearchCV(GridSearchCV):
 
         # get parameters to update
         update_params = {}
-        for key, value in self.param_grid.iteritems():
+        for key, value in self.param_grid.items():
             if all(isinstance(x, int) for x in value):
-                update_params[key] = self._update_elements(
+                updated_value = self._update_elements(
                     results, key, value, dtype=int)
             elif all(isinstance(x, float) for x in value):
-                update_params[key] = self._update_elements(
+                updated_value = self._update_elements(
                     results, key, value, dtype=float)
             else:
-                update_params[key] = value
+                updated_value = value
+            if len(updated_value) > 0:
+                update_params[key] = updated_value
 
         # update parameter grid attribute
         self.param_grid = update_params
@@ -273,7 +275,7 @@ class PrunedPipeline(Pipeline):
         # restructure vocabulary
         terms = []
         indices = []
-        for key, value in voc.iteritems():
+        for key, value in voc.items():
             terms.append(key)
             indices.append(value)
         sort_mask = np.argsort(indices)
@@ -431,17 +433,6 @@ class IterRandomEstimator(BaseEstimator, ClassifierMixin):
             Parameters passed to the ``fit`` method of the estimator
         """
 
-        if self.fit_params is not None:
-            warnings.warn('"fit_params" as a constructor argument was '
-                          'deprecated in version 0.19 and will be removed '
-                          'in version 0.21. Pass fit parameters to the '
-                          '"fit" method instead.', DeprecationWarning)
-            if fit_params:
-                warnings.warn('Ignoring fit_params passed as a constructor '
-                              'argument in favor of keyword arguments to '
-                              'the "fit" method.', RuntimeWarning)
-            else:
-                fit_params = self.fit_params
         estimator = self.estimator
         estimator.verbose = self.verbose
         if self.verbose > 0:
@@ -528,17 +519,6 @@ class OptimizedEnsemble(BaseSearchCV):
             Parameters passed to the ``fit`` method of the estimator
         """
 
-        if self.fit_params is not None:
-            warnings.warn('"fit_params" as a constructor argument was '
-                          'deprecated in version 0.19 and will be removed '
-                          'in version 0.21. Pass fit parameters to the '
-                          '"fit" method instead.', DeprecationWarning)
-            if fit_params:
-                warnings.warn('Ignoring fit_params passed as a constructor '
-                              'argument in favor of keyword arguments to '
-                              'the "fit" method.', RuntimeWarning)
-            else:
-                fit_params = self.fit_params
         estimator = self.estimator
         cv = check_cv(self.cv, y, classifier=is_classifier(estimator))
         n_splits = cv.get_n_splits(X, y, groups=None)

@@ -4,7 +4,7 @@ Various scikit-learn scorers and scoring functions
 
 import numpy as np
 import time
-import cPickle
+import _pickle as cPickle
 from sklearn.metrics.scorer import _BaseScorer
 
 class TimeScorer(_BaseScorer):

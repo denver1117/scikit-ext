@@ -27,15 +27,15 @@ def main():
     model.fit(X, y)
 
     # print results
-    print model._estimator_type
-    print model.best_estimator_
-    print model.scores_
-    print model.best_score_
-    print model.best_index_
-    print model.best_n_estimators_
-    print model.classes_
-    print model.n_estimators_list_
-    print model.score(X,y)
+    print(model._estimator_type)
+    print(model.best_estimator_)
+    print(model.scores_)
+    print(model.best_score_)
+    print(model.best_index_)
+    print(model.best_n_estimators_)
+    print(model.classes_)
+    print(model.n_estimators_list_)
+    print(model.score(X,y))
 
 if __name__ == "__main__":
     main()

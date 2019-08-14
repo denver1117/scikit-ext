@@ -25,9 +25,9 @@ def main():
     model.fit(X)
 
     # print results
-    print model.best_estimator_
-    print model.best_score_
-    print model.scores_
+    print(model.best_estimator_)
+    print(model.best_score_)
+    print(model.scores_)
 
 if __name__ == "__main__":
     main()

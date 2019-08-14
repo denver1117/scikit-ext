@@ -33,9 +33,9 @@ def main():
     model.fit(X, y)
 
     # print results
-    print pd.DataFrame(model.cv_results_)
-    print model.best_score_
-    print model.best_params_
+    print(pd.DataFrame(model.cv_results_))
+    print(model.best_score_)
+    print(model.best_params_)
 
 if __name__ == "__main__":
     main()
