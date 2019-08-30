@@ -1,0 +1,2 @@
+#documentation
+recursive-include docs/_build/html *
