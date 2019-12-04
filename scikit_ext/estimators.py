@@ -191,12 +191,15 @@ class PrunedPipeline(Pipeline):
 
     def __init__(self, steps, memory=None, 
                  vectorizer_name="vec", 
-                 selector_name="select"):
+                 selector_name="select", 
+                 verbose=False):
     
-        Pipeline.__init__(
-            self, steps, memory=memory)
-        self.vectorizer_name=vectorizer_name
-        self.selector_name=selector_name
+        self.steps = steps
+        self.memory = memory
+        self.verbose = verbose
+        self.vectorizer_name = vectorizer_name
+        self.selector_name = selector_name
+        self._validate_steps()
         self._validate_prune()
 
     def fit(self, X, y=None, **fit_params):
