@@ -8,12 +8,15 @@ import _pickle as cPickle
 from sklearn.metrics.scorer import _BaseScorer
 
 class TimeScorer(_BaseScorer):
-    def __call__(self, estimator, X, y_true=None, n_iter=1, unit=True, scoring=None, tradeoff=None):
+    def _score(self, method_caller, estimator, X, y_true=None, n_iter=1, unit=True, scoring=None, tradeoff=None, sample_weight=None):
         """
         Evaluate prediction latency.
 
         Parameters
         ----------
+        method_caller : callable
+            Returns predictions given an estimator, method name, and other
+            arguments, potentially caching results.
         estimator : object
             Trained estimator to use for scoring.
         X : array-like or sparse matrix
@@ -77,12 +80,15 @@ class TimeScorer(_BaseScorer):
         return end_time - start_time
 
 class MemoryScorer(_BaseScorer):
-    def __call__(self, estimator, X=None, y_true=None, scoring=None, tradeoff=None):
+    def _score(self, method_caller, estimator, X=None, y_true=None, scoring=None, tradeoff=None, sample_weight=None):
         """
         Score using estimated memory of pickled estimator object.
 
         Parameters
         ----------
+        method_caller : callable
+            Returns predictions given an estimator, method name, and other
+            arguments, potentially caching results.
         estimator : object
             Trained estimator to use for scoring.
         X : array-like or sparse matrix
@@ -117,12 +123,15 @@ class MemoryScorer(_BaseScorer):
             return 1. / obj_size
 
 class CombinedScorer(_BaseScorer):
-    def __call__(self, estimator, X=None, y_true=None, scoring=None):
+    def _score(self, method_caller, estimator, X=None, y_true=None, scoring=None, sample_weight=None):
         """
         Combine multiple scorers using the average of their scores.
 
         Parameters
         ----------
+        method_caller : callable
+            Returns predictions given an estimator, method name, and other
+            arguments, potentially caching results.
         estimator : object
             Trained estimator to use for scoring.
         X : array-like or sparse matrix
@@ -173,4 +182,3 @@ def cluster_distribution_score(X, labels):
     max_count = float(np.max(np.bincount(labels)))
     return 1.0 / ((max_count / len(labels)) / (1.0 / n_clusters))
 
-    

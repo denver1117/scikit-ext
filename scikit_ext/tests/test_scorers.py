@@ -68,7 +68,7 @@ def test_mem_scorer():
         scoring=memory_score
         )
     model.fit(X, y)
-    assert round(model.best_score_,2) == 0.77
+    assert round(model.best_score_,2) == 0.76
 
 def test_combined_scorer():
     # load sample data
