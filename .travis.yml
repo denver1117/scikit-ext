@@ -7,11 +7,3 @@ install:
 - pip install .
 script:
 - build_tools/test_script.sh
-deploy:
-  provider: pypi
-  skip_existing: true
-  on:
-    branch: master
-  user: denver1117
-  password:
-    secure: LOUd8FQ2+iKeDVNSUWjqeJZzvZDvmTS+lEY/xyBB7nIrb+XmxERFWhf3atKvMfkzmgTjoZzcoD2Lh/SeBiNOvNpdjUrulMnhFgdPm/L0cZwZ1njTACSo8gbmrUsOo8jNqpHq3EZIA4cllep8tVjLHO3wencMg6Rk91UXqwk/Biviuyvgo/B6nNCIdW4mZw9chrrZD1iq1MMwBVBrqwfehWUMRfseRZxn9KSxVKshwLW4/bBcIDHDy9oQukgY/R2aykB3wBQV/rCt9FEvlkEEESdZsWPBOtYM8w82ZfdHgUBiVVXBwdiRYxUss93CbXrk9GpVZVOhvTTq5NLk1V4QuW/pVZi2WH+rvtms04tkbd1JOlD4eXfSgge0NsArfCdEle9xab+7zI5Juz3TJs7wB7FvmBzKgDEGtezcwoyP+yLfQjpwlnc2Z5zOISTTOm9XjmZh7jb7nKCOlkPpEyxZSH72dlvFvw3Ndz8+QcIET6KOxOuy/mDYSCtbxk63s0aQMfZhLSXtNFyhE9POFZcqeAgAUYLHiFZgt/pGofvzBF2cKIK2/0Q/omeMpQfW0qHGPDAiIVuP/N9dNq+IGRqyY8Z3egq9cF7FB5fAdt+SIcWBxCl0LMSmsXlxvRk4eG5ud5iBunM++hPy9JbUnFA0RWj8YSB/CH3LVqkU8D7nWu8=
