@@ -49,7 +49,7 @@ def test_time_scorer():
         scoring=latency_score
         )
     model.fit(X, y)
-    assert np.allclose(model.predict(X), y)
+    assert model.predict(X)[0] == y[0]
 
 def test_mem_scorer():
     # load sample data
@@ -69,7 +69,7 @@ def test_mem_scorer():
         scoring=memory_score
         )
     model.fit(X, y)
-    assert np.allclose(model.predict(X), y)
+    assert model.predict(X)[0] == y[0]
 
 def test_combined_scorer():
     # load sample data
@@ -93,4 +93,4 @@ def test_combined_scorer():
         scoring=combined_score
         )
     model.fit(X, y)
-    assert np.allclose(model.predict(X), y)
+    assert model.predict(X)[0] == y[0]
