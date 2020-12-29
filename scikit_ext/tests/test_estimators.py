@@ -86,19 +86,6 @@ def test_ovr_adj():
     ovr_adj.fit(X,y)
     assert ovr_adj.predict(X)[0] == 0
 
-def test_pruned():
-    data = load_iris()
-    y = data.target
-    X = ["taco words words more zebra elephant" for index in range(len(y))]
-    cv = text.CountVectorizer()
-    select_feat = feature_selection.SelectKBest(feature_selection.chi2, k=2)
-    dt = DecisionTreeClassifier(max_depth=1, random_state=5)
-    pipeline = PrunedPipeline([
-        ("vec", cv), ("select", select_feat), 
-        ("clf", dt)])
-    pipeline.fit(X, y)
-    assert round(pipeline.score(X,y),2) == 0.33
-
 def test_zoom():
     data = load_iris()
     X = data.data
