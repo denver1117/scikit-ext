@@ -35,5 +35,5 @@ setup(name='scikit-ext',
           'pandas',
           'numpy>=1.17.0',
           'scipy>=1.3.1',
-          'scikit-learn>=0.22.0'
+          'scikit-learn>=0.22.0,<0.24'
       ])
