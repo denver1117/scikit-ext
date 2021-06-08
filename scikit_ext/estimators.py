@@ -60,28 +60,8 @@ class ZoomGridSearchCV(GridSearchCV):
         self.n_iter=n_iter
 
     def fit(self, X, y=None, groups=None, **fit_params):
-        """
-        Run fit with all sets of parameters. For ``n_iter``
-        iterations, zoom in on successful parameters, creating
-        a new parameter grid and refitting.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-            Training vector, where n_samples is the number of samples and
-            n_features is the number of features.
-        y : array-like, shape = [n_samples] or [n_samples, n_output], optional
-            Target relative to X for classification or regression;
-            None for unsupervised learning.
-        groups : array-like, with shape (n_samples,), optional
-            Group labels for the samples used while splitting the dataset into
-            train/test set.
-        **fit_params : dict of string -> object
-            Parameters passed to the ``fit`` method of the estimator
-
-        """
         
-        n = -1
+        n_ = -1
         while n < self.n_iter:
             if n > -1:
                 self._update_grid()
