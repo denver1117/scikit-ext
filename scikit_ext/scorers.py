@@ -7,6 +7,18 @@ import time
 import _pickle as cPickle
 from sklearn.metrics.scorer import _BaseScorer
 
+import numpy as np
+import time
+import _pickle as cPickle
+from sklearn.metrics.scorer import _BaseScorer
+
+import numpy as np
+import time
+import _pickle as cPickle
+from sklearn.metrics.scorer import _BaseScorer
+
+from dummy import dummy
+
 class TimeScorer(_BaseScorer):
     def _score(self, method_caller, estimator, X, y_true=None, n_iter=1, unit=True, scoring=None, tradeoff=None, sample_weight=None):
         """
@@ -158,6 +170,29 @@ class CombinedScorer(_BaseScorer):
             scoring = [scoring]
 
         return np.mean([x(estimator, X, y_true) for x in scoring])
+
+def cluster_distribution_score(X, labels):
+    """
+    Scoring function which scores the resulting cluster distribution accross classes. 
+    A more even distribution indicates a higher score.
+
+    Parameters
+    ----------
+    X : array-like, shape (``n_samples``, ``n_features``)
+        List of ``n_features``-dimensional data points. Each row corresponds
+        to a single data point.
+    labels : array-like, shape (``n_samples``,)
+        Predicted labels for each sample.
+
+    Returns
+    -------
+    score : float
+        The resulting Cluster Distribution score.
+    """
+
+    n_clusters = float(len(np.unique(labels)))
+    max_count = float(np.max(np.bincount(labels)))
+    return 1.0 / ((max_count / len(labels)) / (1.0 / n_clusters))
 
 def cluster_distribution_score(X, labels):
     """
